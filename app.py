@@ -19,11 +19,10 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 @app.route('/')
 def index():
     options = [
-        {'name': 'layer_height', 'description': 'Layer Height (mm)'},
-        {'name': 'infill_density', 'description': 'Infill Density (%)'},
+#commented because a dropdown was added instead in html        {'name': 'layer-height', 'description': 'Layer Height (mm)'},
+#        {'name': 'infill-density', 'description': 'Infill Density (%)'},
         {'name': 'perimeters', 'description': 'Number of Perimeters'},
-        {'name': 'support_material', 'description': 'Enable Support Material', 'type': 'checkbox'},
-        {'name': 'support_material_spacing', 'description': 'Support Material Spacing (mm)', 'type': 'text'},
+        {'name': 'support-material', 'description': 'Enable Support Material', 'type': 'checkbox'},
     ]
 
     config_files = [f for f in os.listdir(app.config['UPLOAD_FOLDER']) if f.endswith('.ini')]
@@ -51,7 +50,7 @@ def upload_file():
     for key, value in options.items():
         if key in ['selected_config', 'file']:
             continue
-        if key == 'support_material' and value == 'on':
+        if key == 'support-material' and value == 'on':
             cli_args.append(f'--{key}')
         elif value:
             cli_args.append(f'--{key}={value}')

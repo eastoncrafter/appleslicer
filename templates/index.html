@@ -113,9 +113,39 @@
             <input type="file" id="file" name="file" accept=".stl" required>
         </fieldset>
 
+        <a>Note: leaving these empty will have no effect on the slice. These options take precedence over the config file</a>
+
         <fieldset>
             <legend>Slicing Options</legend>
-            {% for option in options %}
+
+            <div>
+                <label for="layer-height">Layer Height (mm):</label>
+                <select id="layer-height" name="layer-height">
+                    <option value="">Select...</option>
+                    <option value="0.05">0.05</option>
+                    <option value="0.07">0.07</option>
+                    <option value="0.10">0.10</option>
+                    <option value="0.15">0.15</option>
+                    <option value="0.20">0.20</option>
+                    <option value="0.30">0.30</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="infill-density">Infill Density (%):</label>
+                <select id="infill-density" name="infill-density">
+                    <option value="">Select...</option>
+                    <option value="0">0%</option>
+                    <option value="5">5%</option>
+                    <option value="10">10%</option>
+                    <option value="15">15%</option>
+                    <option value="20">20%</option>
+                    <option value="25">25%</option>
+                    <option value="30">30%</option>
+                </select>
+            </div>
+
+            {% for option in options if option.name not in ['layer-height', 'infill-density'] %}
                 <div>
                     <label for="{{ option.name }}">{{ option.description }}</label>
                     {% if option.type == 'checkbox' %}
