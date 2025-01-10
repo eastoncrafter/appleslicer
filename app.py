@@ -52,8 +52,11 @@ def upload_file():
             continue
         if key == 'support-material' and value == 'on':
             cli_args.append(f'--{key}')
+            continue
         if key == 'support-material-style' and value == 'on':
-            cli_args.append(f'organic')
+            cli_args.append(f'--{key}')
+            cli_args.append('organic')
+            continue
         elif value:
             cli_args.append(f'--{key}={value}')
 
@@ -64,6 +67,7 @@ def upload_file():
         if config_filepath:
             slic3r_command.extend(['--load', config_filepath])
         slic3r_command.extend(cli_args)
+        print(' '.join(slic3r_command))
         subprocess.run(slic3r_command, check=True)
     except subprocess.CalledProcessError as e:
         return f"Error during slicing: {str(e)}", 500
