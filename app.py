@@ -21,7 +21,7 @@ def index():
     options = [
 #commented because a dropdown was added instead in html        {'name': 'layer-height', 'description': 'Layer Height (mm)'},
 #        {'name': 'infill-density', 'description': 'Infill Density (%)'},
-        {'name': 'perimeters', 'description': 'Number of Perimeters'},
+#        {'name': 'perimeters', 'description': 'Number of Perimeters'},
         {'name': 'support-material', 'description': 'Enable Support Material', 'type': 'checkbox'},
     ]
 
@@ -52,6 +52,8 @@ def upload_file():
             continue
         if key == 'support-material' and value == 'on':
             cli_args.append(f'--{key}')
+        if key == 'support-material-style' and value == 'on':
+            cli_args.append(f'organic')
         elif value:
             cli_args.append(f'--{key}={value}')
 
