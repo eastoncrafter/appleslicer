@@ -53,13 +53,34 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+        .toggle-button {
+            cursor: pointer;
+            color: #007bff;
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
+    <script>
+        function toggleConfigSection() {
+            const configSection = document.getElementById('config-section');
+            const isHidden = configSection.classList.contains('hidden');
+            configSection.classList.toggle('hidden');
+            document.getElementById('toggle-config').textContent = isHidden ? 'Hide Manage Config Files' : 'Show Manage Config Files';
+        }
+    </script>
 </head>
 <body>
     <h1>STL Slicer</h1>
 
+    <!-- Config Section Toggle -->
+    <div>
+        <span id="toggle-config" class="toggle-button" onclick="toggleConfigSection()">Show Manage Config Files</span>
+    </div>
+
     <!-- Config Section -->
-    <fieldset>
+    <fieldset id="config-section" class="hidden">
         <legend>Manage Config Files</legend>
 
         <h2>Available Config Files</h2>
@@ -121,4 +142,3 @@
     </form>
 </body>
 </html>
-
