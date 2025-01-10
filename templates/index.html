@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STL Slicer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        fieldset {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .config-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .config-list li {
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .config-list li.selected {
+            background-color: #d3d3d3;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .upload-button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .upload-button:hover {
+            background-color: #0056b3;
+        }
+        input[type="text"], input[type="file"], select {
+            padding: 8px;
+            width: 100%;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>STL Slicer</h1>
+
+    <!-- Config Section -->
+    <fieldset>
+        <legend>Manage Config Files</legend>
+
+        <h2>Available Config Files</h2>
+        <ul class="config-list">
+            {% for config_file in config_files %}
+                <li id="{{ config_file }}">
+                    <span>{{ config_file }}</span>
+                    <form action="/delete_config/{{ config_file }}" method="POST" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Upload New Config File</h2>
+        <form action="/save_config" method="POST" enctype="multipart/form-data">
+            <label for="config_name">Config File Name:</label>
+            <input type="text" id="config_name" name="config_name" placeholder="Enter config name" required>
+            <label for="config_file">Config File:</label>
+            <input type="file" id="config_file" name="config_file" accept=".ini" required>
+            <button type="submit" class="upload-button">Save Config</button>
+        </form>
+    </fieldset>
+
+    <!-- Slicing Options -->
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <fieldset>
+            <legend>Upload STL File</legend>
+            <label for="file">Select STL File:</label>
+            <input type="file" id="file" name="file" accept=".stl" required>
+        </fieldset>
+
+        <fieldset>
+            <legend>Slicing Options</legend>
+            {% for option in options %}
+                <div>
+                    <label for="{{ option.name }}">{{ option.description }}</label>
+                    {% if option.type == 'checkbox' %}
+                        <input type="checkbox" id="{{ option.name }}" name="{{ option.name }}">
+                    {% else %}
+                        <input type="text" id="{{ option.name }}" name="{{ option.name }}" placeholder="Enter value">
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </fieldset>
+
+        <fieldset>
+            <legend>Select Config File</legend>
+            <label for="selected_config">Choose a Config File:</label>
+            <select id="selected_config" name="selected_config">
+                <option value="">None</option>
+                {% for config_file in config_files %}
+                    <option value="{{ config_file }}">{{ config_file }}</option>
+                {% endfor %}
+            </select>
+        </fieldset>
+
+        <button type="submit" class="upload-button">Slice Files</button>
+    </form>
+</body>
+</html>
+
