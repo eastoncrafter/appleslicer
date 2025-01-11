@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliced File</title>
+</head>
+<body>
+    <h1>File Sliced Successfully</h1>
+    <p>Your file has been sliced and is ready for download or sending to OctoPrint.</p>
+    <a href="/download/{{ filename }}">Download G-code</a>
+    <form action="/send_to_octoprint/{{ filename }}" method="post" style="margin-top: 10px;">
+        <button type="submit">Send to OctoPrint</button>
+    </form>
+    <a href="/">Back to Home</a>
+</body>
+</html>
