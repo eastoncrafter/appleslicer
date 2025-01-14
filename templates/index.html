@@ -9,6 +9,8 @@
             font-family: Arial, sans-serif;
             margin: 20px;
             line-height: 1.6;
+            background-color: white;
+            color: black;
         }
         h1, h2 {
             color: #333;
@@ -52,6 +54,8 @@
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            background-color: white;
+            color: black;
         }
         .toggle-button {
             cursor: pointer;
@@ -61,6 +65,30 @@
         .hidden {
             display: none;
         }
+        .dark-mode {
+            background-color: #333;
+            color: white;
+        }
+        .dark-mode h1, .dark-mode h2 {
+            color: white;
+        }
+        .dark-mode fieldset {
+            border-color: #555;
+        }
+        .dark-mode .upload-button {
+            background-color: #555;
+        }
+        .dark-mode .upload-button:hover {
+            background-color: #333;
+        }
+        .dark-mode .config-list li.selected {
+            background-color: #555;
+        }
+        .dark-mode input[type="text"], .dark-mode input[type="file"], .dark-mode select {
+            background-color: #555;
+            color: white;
+            border-color: #777;
+        }
     </style>
     <script>
         function toggleConfigSection() {
@@ -69,10 +97,32 @@
             configSection.classList.toggle('hidden');
             document.getElementById('toggle-config').textContent = isHidden ? 'Hide Manage Config Files' : 'Show Manage Config Files';
         }
+
+        function toggleDarkMode() {
+            const body = document.body;
+            const isDarkMode = body.classList.toggle('dark-mode');
+            document.getElementById('dark-mode-toggle').textContent = isDarkMode ? '🌞' : '🌜';
+            localStorage.setItem('darkMode', isDarkMode);
+        }
+
+        function loadDarkMode() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                document.getElementById('dark-mode-toggle').textContent = '🌞';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadDarkMode);
     </script>
 </head>
 <body>
     <h1>STL Slicer</h1>
+
+    <!-- Dark Mode Toggle -->
+    <div>
+        <span id="dark-mode-toggle" class="toggle-button" onclick="toggleDarkMode()">🌜</span>
+    </div>
 
     <!-- Config Section Toggle -->
     <div>
@@ -156,15 +206,10 @@
                 </div>
             {% endfor %}
 
-
             <div>
                 <label for="support-material-style">Support Style: Organic</label>
-                
-                    <input type="checkbox" id="support-material-style" name="support-material-style">
-                
+                <input type="checkbox" id="support-material-style" name="support-material-style">
             </div>
-
-
         </fieldset>
 
         <fieldset>
