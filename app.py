@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, send_from_directory, redirect, url_for
 import os
 import subprocess
+import requests
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -8,6 +9,8 @@ app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'outputs'
 SLIC3R_EXECUTABLE = 'C:\\Program Files\\Prusa3D\\PrusaSlicer\\prusa-slicer-console.exe'
+OCTOPRINT_API_KEY = 'enter your token here'
+OCTOPRINT_URL = 'http://192.168.50.160/api/files/local'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
@@ -19,9 +22,6 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 @app.route('/')
 def index():
     options = [
-#commented because a dropdown was added instead in html        {'name': 'layer-height', 'description': 'Layer Height (mm)'},
-#        {'name': 'infill-density', 'description': 'Infill Density (%)'},
-#        {'name': 'perimeters', 'description': 'Number of Perimeters'},
         {'name': 'support-material', 'description': 'Enable Support Material', 'type': 'checkbox'},
     ]
 
@@ -53,10 +53,6 @@ def upload_file():
         if key == 'support-material' and value == 'on':
             cli_args.append(f'--{key}')
             continue
-        if key == 'support-material-style' and value == 'on':
-            cli_args.append(f'--{key}')
-            cli_args.append('organic')
-            continue
         elif value:
             cli_args.append(f'--{key}={value}')
 
@@ -72,11 +68,33 @@ def upload_file():
     except subprocess.CalledProcessError as e:
         return f"Error during slicing: {str(e)}", 500
 
-    return f"File sliced successfully! <a href='/download/{os.path.basename(output_file)}'>Download G-code</a>"
+    return redirect(url_for('sliced_file_page', filename=os.path.basename(output_file)))
+
+@app.route('/sliced_file/<filename>')
+def sliced_file_page(filename):
+    return render_template('sliced_file.html', filename=filename)
 
 @app.route('/download/<filename>')
 def download_file(filename):
     return send_from_directory(app.config['OUTPUT_FOLDER'], filename)
+
+@app.route('/send_to_octoprint/<filename>', methods=['POST'])
+def send_to_octoprint(filename):
+    file_path = os.path.join(app.config['OUTPUT_FOLDER'], filename)
+    if not os.path.exists(file_path):
+        return "File not found.", 404
+
+    with open(file_path, 'rb') as file:
+        response = requests.post(
+            OCTOPRINT_URL,
+            headers={'X-Api-Key': OCTOPRINT_API_KEY},
+            files={'file': file}
+        )
+
+    if response.status_code == 201:
+        return "File successfully sent to OctoPrint."
+    else:
+        return f"Failed to send file to OctoPrint: {response.status_code} - {response.text}", 500
 
 @app.route('/save_config', methods=['POST'])
 def save_config():
