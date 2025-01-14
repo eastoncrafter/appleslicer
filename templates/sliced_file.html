@@ -45,6 +45,12 @@
         .dark-mode .upload-button:hover {
             background-color: #333;
         }
+        .dark-mode a {
+            color: #1e90ff;
+        }
+        .dark-mode a:hover {
+            color: #63b8ff;
+        }
     </style>
     <script>
         function toggleDarkMode() {
@@ -68,11 +74,11 @@
 <body>
     <h1>File Sliced Successfully</h1>
     <p>Your file has been sliced and is ready for download or sending to OctoPrint.</p>
-    <a href="/download/{{ filename }}">Download G-code</a>
+    <a href="/download/{{ filename }}" class="download-link">Download G-code</a>
     <form action="/send_to_octoprint/{{ filename }}" method="post" style="margin-top: 10px;">
         <button type="submit" class="upload-button">Send to OctoPrint</button>
     </form>
-    <a href="/">Back to Home</a>
+    <a href="/" class="home-link">Back to Home</a>
 
     <!-- Dark Mode Toggle -->
     <div style="margin-top: 20px;">
