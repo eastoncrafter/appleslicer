@@ -4,14 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sliced File</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background-color: white;
+            color: black;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .upload-button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .upload-button:hover {
+            background-color: #0056b3;
+        }
+        .toggle-button {
+            cursor: pointer;
+            color: #007bff;
+            text-decoration: underline;
+        }
+        .dark-mode {
+            background-color: #333;
+            color: white;
+        }
+        .dark-mode h1, .dark-mode h2 {
+            color: white;
+        }
+        .dark-mode .upload-button {
+            background-color: #555;
+        }
+        .dark-mode .upload-button:hover {
+            background-color: #333;
+        }
+    </style>
+    <script>
+        function toggleDarkMode() {
+            const body = document.body;
+            const isDarkMode = body.classList.toggle('dark-mode');
+            document.getElementById('dark-mode-toggle').textContent = isDarkMode ? '🌞' : '🌜';
+            localStorage.setItem('darkMode', isDarkMode);
+        }
+
+        function loadDarkMode() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                document.getElementById('dark-mode-toggle').textContent = '🌞';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadDarkMode);
+    </script>
 </head>
 <body>
     <h1>File Sliced Successfully</h1>
     <p>Your file has been sliced and is ready for download or sending to OctoPrint.</p>
     <a href="/download/{{ filename }}">Download G-code</a>
     <form action="/send_to_octoprint/{{ filename }}" method="post" style="margin-top: 10px;">
-        <button type="submit">Send to OctoPrint</button>
+        <button type="submit" class="upload-button">Send to OctoPrint</button>
     </form>
     <a href="/">Back to Home</a>
+
+    <!-- Dark Mode Toggle -->
+    <div style="margin-top: 20px;">
+        <span id="dark-mode-toggle" class="toggle-button" onclick="toggleDarkMode()">🌜</span>
+    </div>
 </body>
 </html>
