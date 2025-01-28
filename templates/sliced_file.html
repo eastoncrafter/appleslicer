@@ -3,41 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sliced File</title>
+    <title>Queue to OctoPrint</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
             line-height: 1.6;
-            background-color: white;
-            color: black;
-        }
-        h1, h2 {
-            color: #333;
-        }
-        .upload-button {
-            font-size: 1.2em;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .upload-button:hover {
-            background-color: #0056b3;
-        }
-        .toggle-button {
-            cursor: pointer;
-            color: #007bff;
-            text-decoration: underline;
         }
         .dark-mode {
             background-color: #333;
-            color: white;
+            color: black;
         }
         .dark-mode h1, .dark-mode h2 {
-            color: white;
+            color: black;
         }
         .dark-mode .upload-button {
             background-color: #555;
@@ -50,6 +28,19 @@
         }
         .dark-mode a:hover {
             color: #63b8ff;
+        }
+        .dark-mode p {
+            color: black;
+        }
+        .dark-mode label {
+            color: black;
+        }
+        select {
+            border: 2px solid #4A90E2;
+            padding: 0.5rem;
+        }
+        .dark-mode select {
+            border-color: #1e90ff;
         }
     </style>
     <script>
@@ -71,18 +62,45 @@
         document.addEventListener('DOMContentLoaded', loadDarkMode);
     </script>
 </head>
-<body>
-    <h1>File Sliced Successfully</h1>
-    <p>Your file has been sliced and is ready for download or sending to OctoPrint.</p>
-    <a href="/download/{{ filename }}" class="download-link">Download G-code</a>
-    <form action="/send_to_octoprint/{{ filename }}" method="post" style="margin-top: 10px;">
-        <button type="submit" class="upload-button">Send to OctoPrint</button>
-    </form>
-    <a href="/" class="home-link">Back to Home</a>
+<body class="bg-gray-100 text-gray-900">
+    <div class="container mx-auto mt-10 p-5 max-w-md bg-white rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold mb-5">Queue File to OctoPrint</h1>
 
-    <!-- Dark Mode Toggle -->
-    <div style="margin-top: 20px;">
-        <span id="dark-mode-toggle" class="toggle-button" onclick="toggleDarkMode()">🌜</span>
+        <form action="/queue_to_octoprint/{{ filename }}" method="POST" class="space-y-4">
+            <div>
+                <label for="printer_name" class="block text-sm font-medium">Select Printer</label>
+                <select id="printer_name" name="printer_name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="Creality Ender 3">Sir Prints a Lot</option>
+                    <option value="Printer2">Printer 2</option>
+                    <option value="Printer3">Printer 3</option>
+                </select>
+            </div>
+
+            <div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Queue File
+                </button>
+            </div>
+        </form>
+
+        <p class="mt-5 text-sm text-gray-600">Queuing file: <strong>{{ filename }}</strong></p>
+
+        <div class="mt-10">
+            <h1 class="text-lg font-bold">File Sliced Successfully</h1>
+            <p class="mt-2">Your file has been sliced and is ready for download or sending to OctoPrint.</p>
+            <a href="/download/{{ filename }}" class="text-blue-500 hover:underline">Download G-code</a>
+            <form action="/send_to_octoprint/{{ filename }}" method="post" class="mt-4">
+                <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    Send to OctoPrint
+                </button>
+            </form>
+            <a href="/" class="block mt-4 text-blue-500 hover:underline">Back to Home</a>
+        </div>
+
+        <!-- Dark Mode Toggle -->
+        <div class="mt-10">
+            <span id="dark-mode-toggle" class="cursor-pointer text-blue-500 hover:underline" onclick="toggleDarkMode()">🌜</span>
+        </div>
     </div>
 </body>
 </html>
