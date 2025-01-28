@@ -12,11 +12,11 @@ OUTPUT_FOLDER = 'outputs'
 SLIC3R_EXECUTABLE = 'C:\\Program Files\\Prusa3D\\PrusaSlicer\\prusa-slicer-console.exe'
 OCTOPRINT_API_KEY = 'eP1a5wTv8q5hn3ArUFxq1Kffg8Kh0pYd-3erT1_JqlI'
 OCTOPRINT_URL = 'http://10.1.10.56/api/files/local'
+CONTINUOUSPRINTURL = 'http://10.1.10.56/plugin/continuousprint'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
 
-# Create directories if they don't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
@@ -32,10 +32,6 @@ def index():
     config_files = [f for f in os.listdir(app.config['UPLOAD_FOLDER']) if f.endswith('.ini')]
 
     return render_template('index.html', options=options, config_files=config_files)
-
-
-
-
 
 
 # Main Slicing function, takes the uploaded file and config file, and slices the STL file, then redirects to the sliced file page with options to download, send to octoprint, queue to octoprint, or return to home.
@@ -84,10 +80,7 @@ def upload_file():
 
 
 
-
-
-
-#Slice config management
+#Slice config management upload and remove functions
 ####################################################################################################
 @app.route('/save_config', methods=['POST'])
 def save_config():
@@ -113,18 +106,16 @@ def delete_config(config_name):
 ####################################################################################################
 
 
+###END API SECTION
 
 
 
 
-
-
+#START RENDER SECTION
 # Simple interface to download the gcode, push or queue to octoprint, or return to home. Accepts the filename of the gcode file so it can be passed to /download and /send_to_octoprint
 @app.route('/sliced_file/<filename>')
 def sliced_file_page(filename):
     return render_template('sliced_file.html', filename=filename)
-
-
 # Download function for the above function
 @app.route('/download/<filename>')
 def download_file(filename):
@@ -139,7 +130,17 @@ def download_file(filename):
 
 
 
-# Send to Octoprint : Accepts the filename of the gcode file, then posts it to the octoprint api with OCTOPRINT_URL and OCTOPRINT_API_KEY as defined at the top of the file.
+
+
+
+#Don't know how this got here
+#renders for send and queue to octoprint
+#@app.route('/queue_to_octoprint/<filename>')
+#def queue_to_octoprint_page(filename):
+#    return render_template('queue_to_octoprint.html', filename=filename)
+
+
+# Send to Octoprint
 @app.route('/send_to_octoprint/<filename>', methods=['POST'])
 def send_to_octoprint(filename):
     file_path = os.path.join(app.config['OUTPUT_FOLDER'], filename)
@@ -157,17 +158,7 @@ def send_to_octoprint(filename):
         return "File successfully sent to OctoPrint."
     else:
         return f"Failed to send file to OctoPrint: {response.status_code} - {response.text}", 500
-
-
-
-# Advanced Queue to octoprint page
-# Serves a page that shows a dropdown for which printer to print on, and a submit button to queue the file to that printer. Accepts the filename of the gcode file. Renders the queue_to_octoprint.html template.
-@app.route('/queue_to_octoprint/<filename>')
-def queue_to_octoprint_page(filename):
-    return render_template('queue_to_octoprint.html', filename=filename)
-
-
-#Queue to octoprint post function #takes the filename of the gcode file and the printer name, then posts the file to the octoprint api as normal. Will then make a post request to Continuous Print plugin to queue the file to the selected printer. Post to  http://10.1.10.56/plugin/continuousprint/set/add with json provided
+# Queue to octoprint
 @app.route('/queue_to_octoprint/<filename>', methods=['POST'])
 def queue_to_octoprint(filename):
     printer_name = request.form.get('printer_name')
@@ -188,7 +179,7 @@ def queue_to_octoprint(filename):
         "Content-Type": "application/json"
       }
         queue_response = requests.post(
-            url='http://10.1.10.56/plugin/continuousprint/set/add',
+            url=CONTINUOUSPRINTURL + '/set/add',
             headers={
                 "Authorization": "Bearer iggUK5dwXCiO66NQIZKl06oIjWL1c9_mpWTIu2GZ4ps", # Replace <your-token> with the actual token
             },
@@ -209,33 +200,6 @@ def queue_to_octoprint(filename):
             return "File successfully queued to OctoPrint."
         else:
                 return f"Failed to queue file: {queue_response.status_code} - {queue_response.text}", 500
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
