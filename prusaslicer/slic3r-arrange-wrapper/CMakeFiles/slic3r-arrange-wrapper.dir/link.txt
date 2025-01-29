@@ -1,0 +1,2 @@
+/usr/bin/ar qc libslic3r-arrange-wrapper.a "CMakeFiles/slic3r-arrange-wrapper.dir/src/ArrangeSettingsDb_AppCfg.cpp.o" "CMakeFiles/slic3r-arrange-wrapper.dir/src/Items/SimpleArrangeItem.cpp.o" "CMakeFiles/slic3r-arrange-wrapper.dir/src/SceneBuilder.cpp.o" "CMakeFiles/slic3r-arrange-wrapper.dir/src/Scene.cpp.o" "CMakeFiles/slic3r-arrange-wrapper.dir/src/Items/ArrangeItem.cpp.o" "CMakeFiles/slic3r-arrange-wrapper.dir/src/ModelArrange.cpp.o"
+/usr/bin/ranlib libslic3r-arrange-wrapper.a
