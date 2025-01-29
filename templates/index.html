@@ -3,77 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STL Slicer</title>
+    <title>Apple Slicer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
             line-height: 1.6;
-            background-color: white;
-            color: black;
-        }
-        h1, h2 {
-            color: #333;
-        }
-        fieldset {
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        .config-list {
-            list-style-type: none;
-            padding: 0;
-        }
-        .config-list li {
-            margin: 5px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .config-list li.selected {
-            background-color: #d3d3d3;
-            padding: 5px;
-            border-radius: 5px;
-        }
-        .upload-button {
-            font-size: 1.2em;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .upload-button:hover {
-            background-color: #0056b3;
-        }
-        input[type="text"], input[type="file"], select {
-            padding: 8px;
-            width: 100%;
-            margin-top: 5px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: white;
-            color: black;
-        }
-        .toggle-button {
-            cursor: pointer;
-            color: #007bff;
-            text-decoration: underline;
-        }
-        .hidden {
-            display: none;
         }
         .dark-mode {
             background-color: #333;
-            color: white;
+            color: black;
         }
         .dark-mode h1, .dark-mode h2 {
-            color: white;
-        }
-        .dark-mode fieldset {
-            border-color: #555;
+            color: black;
         }
         .dark-mode .upload-button {
             background-color: #555;
@@ -81,13 +23,48 @@
         .dark-mode .upload-button:hover {
             background-color: #333;
         }
-        .dark-mode .config-list li.selected {
-            background-color: #555;
+        .dark-mode a {
+            color: #1e90ff;
         }
-        .dark-mode input[type="text"], .dark-mode input[type="file"], .dark-mode select {
-            background-color: #555;
-            color: white;
-            border-color: #777;
+        .dark-mode a:hover {
+            color: #63b8ff;
+        }
+        .dark-mode p {
+            color: black;
+        }
+        .dark-mode label {
+            color: black;
+        }
+        select {
+            border: 2px solid #4A90E2;
+            padding: 0.5rem;
+        }
+        .dark-mode select {
+            border-color: #1e90ff;
+        }
+        #config-section {
+            border: 2px solid #4A90E2;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        #slicing-options {
+            border: 2px solid #d3a828;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        #stl-upload-box {
+            border: 2px solid #d34a28;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        #config-file-selection {
+            border: 2px solid #45d328;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
         }
     </style>
     <script>
@@ -116,114 +93,122 @@
         document.addEventListener('DOMContentLoaded', loadDarkMode);
     </script>
 </head>
-<body>
-    <h1>STL Slicer</h1>
+<body class="bg-gray-100 text-gray-900">
+    <div class="container mx-auto mt-10 p-5 max-w-md bg-white rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold mb-5">Apple Slicer</h1>
 
-    <!-- Dark Mode Toggle -->
-    <div>
-        <span id="dark-mode-toggle" class="toggle-button" onclick="toggleDarkMode()">🌜</span>
-    </div>
+        <!-- Dark Mode Toggle -->
+        <div>
+            <span id="dark-mode-toggle" class="cursor-pointer text-blue-500 hover:underline" onclick="toggleDarkMode()">🌜</span>
+        </div>
 
-    <!-- Config Section Toggle -->
-    <div>
-        <span id="toggle-config" class="toggle-button" onclick="toggleConfigSection()">Show Manage Config Files</span>
-    </div>
+        <!-- Slicing Options -->
+        <form action="/upload" method="POST" enctype="multipart/form-data" class="mt-4">
+            <fieldset id="stl-upload-box">
+                <legend class="text-lg font-bold">Upload STL File</legend>
+                <label for="file" class="block text-sm font-medium mt-2">Select STL File:</label>
+                <input type="file" id="file" name="file" accept=".stl, .obj" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2">            </fieldset>
 
-    <!-- Config Section -->
-    <fieldset id="config-section" class="hidden">
-        <legend>Manage Config Files</legend>
 
-        <h2>Available Config Files</h2>
-        <ul class="config-list">
-            {% for config_file in config_files %}
-                <li id="{{ config_file }}">
-                    <span>{{ config_file }}</span>
-                    <form action="/delete_config/{{ config_file }}" method="POST" style="display:inline;">
-                        <button type="submit">Delete</button>
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
+            <fieldset id="slicing-options" class="mt-4">
+                <legend class="text-lg font-bold">Slicing Options</legend>
+            <p class="mt-2 text-sm text-gray-600">Note: leaving these empty will have no effect on the slice. These options take precedence over the config file</p>
 
-        <h2>Upload New Config File</h2>
-        <form action="/save_config" method="POST" enctype="multipart/form-data">
-            <label for="config_name">Config File Name:</label>
-            <input type="text" id="config_name" name="config_name" placeholder="Enter config name" required>
-            <label for="config_file">Config File:</label>
-            <input type="file" id="config_file" name="config_file" accept=".ini" required>
-            <button type="submit" class="upload-button">Save Config</button>
-        </form>
-    </fieldset>
-
-    <!-- Slicing Options -->
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <fieldset>
-            <legend>Upload STL File</legend>
-            <label for="file">Select STL File:</label>
-            <input type="file" id="file" name="file" accept=".stl" required>
-        </fieldset>
-
-        <a>Note: leaving these empty will have no effect on the slice. These options take precedence over the config file</a>
-
-        <fieldset>
-            <legend>Slicing Options</legend>
-
-            <div>
-                <label for="layer-height">Layer Height (mm):</label>
-                <select id="layer-height" name="layer-height">
-                    <option value="">Select...</option>
-                    <option value="0.05">0.05</option>
-                    <option value="0.07">0.07</option>
-                    <option value="0.10">0.10</option>
-                    <option value="0.15">0.15</option>
-                    <option value="0.20">0.20</option>
-                    <option value="0.30">0.30</option>
-                </select>
-            </div>
-
-            <div>
-                <label for="infill-density">Infill Density (%):</label>
-                <select id="infill-density" name="infill-density">
-                    <option value="">Select...</option>
-                    <option value="0">0%</option>
-                    <option value="5">5%</option>
-                    <option value="10">10%</option>
-                    <option value="15">15%</option>
-                    <option value="20">20%</option>
-                    <option value="25">25%</option>
-                    <option value="30">30%</option>
-                </select>
-            </div>
-
-            {% for option in options if option.name not in ['layer-height', 'infill-density'] %}
-                <div>
-                    <label for="{{ option.name }}">{{ option.description }}</label>
-                    {% if option.type == 'checkbox' %}
-                        <input type="checkbox" id="{{ option.name }}" name="{{ option.name }}">
-                    {% else %}
-                        <input type="text" id="{{ option.name }}" name="{{ option.name }}" placeholder="Enter value">
-                    {% endif %}
+                <div class="mt-2">
+                    <label for="layer-height" class="block text-sm font-medium">Layer Height (mm):</label>
+                    <select id="layer-height" name="layer-height" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">Select...</option>
+                        <option value="0.05">0.05</option>
+                        <option value="0.07">0.07</option>
+                        <option value="0.10">0.10</option>
+                        <option value="0.15">0.15</option>
+                        <option value="0.20">0.20</option>
+                        <option value="0.30">0.30</option>
+                    </select>
                 </div>
-            {% endfor %}
 
-            <div>
-                <label for="support-material-style">Support Style: Organic</label>
-                <input type="checkbox" id="support-material-style" name="support-material-style">
-            </div>
-        </fieldset>
+                <div class="mt-2">
+                    <label for="infill-density" class="block text-sm font-medium">Infill Density (%):</label>
+                    <select id="infill-density" name="infill-density" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">Select...</option>
+                        <option value="0">0%</option>
+                        <option value="5">5%</option>
+                        <option value="10">10%</option>
+                        <option value="15">15%</option>
+                        <option value="20">20%</option>
+                        <option value="25">25%</option>
+                        <option value="30">30%</option>
+                    </select>
+                </div>
 
-        <fieldset>
-            <legend>Select Config File</legend>
-            <label for="selected_config">Choose a Config File:</label>
-            <select id="selected_config" name="selected_config">
-                <option value="">None</option>
-                {% for config_file in config_files %}
-                    <option value="{{ config_file }}">{{ config_file }}</option>
+                {% for option in options if option.name not in ['layer-height', 'infill-density'] %}
+                    <div class="mt-2">
+                        <label for="{{ option.name }}" class="block text-sm font-medium">{{ option.description }}</label>
+                        {% if option.type == 'checkbox' %}
+                            <input type="checkbox" id="{{ option.name }}" name="{{ option.name }}" class="mt-1 block rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        {% else %}
+                            <input type="text" id="{{ option.name }}" name="{{ option.name }}" placeholder="Enter value" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        {% endif %}
+                    </div>
                 {% endfor %}
-            </select>
-        </fieldset>
 
-        <button type="submit" class="upload-button">Slice Files</button>
-    </form>
+                <div class="mt-2">
+                    <label for="support-material-style" class="block text-sm font-medium">Support Style: Organic</label>
+                    <input type="checkbox" id="support-material-style" name="support-material-style" class="mt-1 block rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+            </fieldset>
+
+
+            
+
+
+
+
+            <fieldset class="mt-4" id="config-file-selection">
+                <!-- Config Section Toggle -->
+                <div>
+                    <span id="toggle-config" class="cursor-pointer text-blue-500 hover:underline" onclick="toggleConfigSection()">Show Manage Config Files</span>
+                </div>
+                
+ 
+
+                <legend class="text-lg font-bold">Select Config File</legend>
+                <label for="selected_config" class="block text-sm font-medium mt-2">Choose a Config File:</label>
+                <select id="selected_config" name="selected_config" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="">None</option>
+                    {% for config_file in config_files %}
+                        <option value="{{ config_file }}">{{ config_file }}</option>
+                    {% endfor %}
+                </select>
+            </fieldset>
+
+            <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mt-4">Slice Files</button>
+        </form>
+           <!-- Hidden Config Section -->
+           <fieldset id="config-section" class="hidden mt-4">
+            <legend class="text-lg font-bold">Manage Config Files</legend>
+            <h2 class="text-md font-semibold mt-4">Available Config Files</h2>
+            <ul class="config-list">
+                {% for config_file in config_files %}
+                    <li id="{{ config_file }}" class="flex justify-between items-center mt-2">
+                        <span>{{ config_file }}</span>
+                        <form action="/delete_config/{{ config_file }}" method="POST" style="display:inline;">
+                            <button type="submit" class="bg-red-600 text-white py-1 px-2 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Delete</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+            <h2 class="text-md font-semibold mt-4">Upload New Config File</h2>
+            <form action="/save_config" method="POST" enctype="multipart/form-data" class="mt-2">
+                <label for="config_name" class="block text-sm font-medium">Config File Name:</label>
+                <input type="text" id="config_name" name="config_name" placeholder="Enter config name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <label for="config_file" class="block text-sm font-medium mt-2">Config File:</label>
+                <input type="file" id="config_file" name="config_file" accept=".ini" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mt-4">Save Config</button>
+            </form>
+        </fieldset>
+        <!-- End Hidden Config Section-->
+                
+    </div>
 </body>
 </html>
