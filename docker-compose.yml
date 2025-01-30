@@ -1,0 +1,11 @@
+name: appleslicer
+services:
+    appleslicer:
+        ports:
+            - 7000:5000
+        image: eastoncrafter/appleslicer:betav1
+        restart: always
+        environment:
+            - OCTOPRINT_API_KEY=eP1a5wTv8q5hn3ArUFxq1Kffg8Kh0pYd-3erT1_JqlI
+            - OCTOPRINT_URL=http://10.1.10.56/api/files/local
+            - CONTINUOUSPRINTURL=http://10.1.10.56/plugin/continuousprint
