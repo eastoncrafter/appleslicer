@@ -4,7 +4,8 @@ FROM python:3.13.1-bullseye
 # Set environment variables to reduce interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
-
+RUN apt-get update
+RUN apt-get install -y libglu1-mesa-dev libgtk-3-dev libdbus-1-dev libwebkit2gtk-4.0-37
 # Set the working directory inside the container
 WORKDIR /app
 
