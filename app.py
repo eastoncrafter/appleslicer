@@ -9,10 +9,15 @@ app = Flask(__name__)
 
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'outputs'
-SLIC3R_EXECUTABLE = 'C:\\Program Files\\Prusa3D\\PrusaSlicer\\prusa-slicer-console.exe'
-OCTOPRINT_API_KEY = 'eP1a5wTv8q5hn3ArUFxq1Kffg8Kh0pYd-3erT1_JqlI'
-OCTOPRINT_URL = 'http://10.1.10.56/api/files/local'
-CONTINUOUSPRINTURL = 'http://10.1.10.56/plugin/continuousprint'
+SLIC3R_EXECUTABLE = '/app/prusaslicer/prusa-slicer'
+#OCTOPRINT_API_KEY = 'eP1a5wTv8q5hn3ArUFxq1Kffg8Kh0pYd-3erT1_JqlI'
+#OCTOPRINT_URL = 'http://10.1.10.56/api/files/local'
+#CONTINUOUSPRINTURL = 'http://10.1.10.56/plugin/continuousprint'
+
+# reads from env variables for docker support, defaults back if none provided (supposedly...)
+OCTOPRINT_API_KEY = os.environ.get('OCTOPRINT_API_KEY', 'eP1a5wTv8q5hn3ArUFxq1Kffg8Kh0pYd-3erT1_JqlI')
+OCTOPRINT_URL = os.environ.get('OCTOPRINT_URL', 'http://10.1.10.56/api/files/local')
+CONTINUOUSPRINTURL = os.environ.get('CONTINUOUSPRINTURL', 'http://10.1.10.56/plugin/continuousprint')
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
@@ -197,7 +202,7 @@ def queue_to_octoprint(filename):
         print(queue_response)
         if queue_response.status_code == 200:
 
-            return "File successfully queued to OctoPrint."
+            return render_template('success.html', filename=filename)
         else:
                 return f"Failed to queue file: {queue_response.status_code} - {queue_response.text}", 500
 

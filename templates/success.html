@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Successfully Queued</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .dark-mode {
+            background-color: #333;
+            color: black;
+        }
+        .dark-mode h1 {
+            color: black;
+        }
+        .dark-mode a {
+            color: #1e90ff;
+        }
+        .dark-mode a:hover {
+            color: #63b8ff;
+        }
+    </style>
+    <script>
+        function toggleDarkMode() {
+            const body = document.body;
+            const isDarkMode = body.classList.toggle('dark-mode');
+            document.getElementById('dark-mode-toggle').textContent = isDarkMode ? '🌞' : '🌜';
+            localStorage.setItem('darkMode', isDarkMode);
+        }
+
+        function loadDarkMode() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                document.getElementById('dark-mode-toggle').textContent = '🌞';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadDarkMode);
+    </script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="container mx-auto mt-10 p-5 max-w-md bg-white rounded-lg shadow-md text-center">
+        <h1 class="text-2xl font-bold mb-5">File Queued Successfully</h1>
+        <p class="text-lg">The file <strong>{{ filename }}</strong> has been successfully queued to OctoPrint.</p>
+        <a href="/" class="block mt-5 text-blue-500 hover:underline">Back to Home</a>
+        
+        <!-- Dark Mode Toggle -->
+        <div class="mt-10">
+            <span id="dark-mode-toggle" class="cursor-pointer text-blue-500 hover:underline" onclick="toggleDarkMode()">🌜</span>
+        </div>
+    </div>
+</body>
+</html>
