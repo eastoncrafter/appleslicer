@@ -1,2 +1,0 @@
-/usr/bin/ar qc libclipper.a CMakeFiles/clipper.dir/clipper_z.cpp.o
-/usr/bin/ranlib libclipper.a

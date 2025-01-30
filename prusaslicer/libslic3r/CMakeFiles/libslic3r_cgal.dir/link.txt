@@ -1,2 +1,0 @@
-/usr/bin/ar qc liblibslic3r_cgal.a CMakeFiles/libslic3r_cgal.dir/CutSurface.cpp.o CMakeFiles/libslic3r_cgal.dir/Geometry/VoronoiUtilsCgal.cpp.o CMakeFiles/libslic3r_cgal.dir/IntersectionPoints.cpp.o CMakeFiles/libslic3r_cgal.dir/MeshBoolean.cpp.o CMakeFiles/libslic3r_cgal.dir/TryCatchSignal.cpp.o CMakeFiles/libslic3r_cgal.dir/Triangulation.cpp.o
-/usr/bin/ranlib liblibslic3r_cgal.a

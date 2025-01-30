@@ -1,2 +1,0 @@
-/usr/bin/ar qc libslic3r-arrange.a "CMakeFiles/slic3r-arrange.dir/src/Beds.cpp.o" "CMakeFiles/slic3r-arrange.dir/src/NFP/NFP.cpp.o" "CMakeFiles/slic3r-arrange.dir/src/NFP/NFPConcave_Tesselate.cpp.o" "CMakeFiles/slic3r-arrange.dir/src/NFP/EdgeCache.cpp.o"
-/usr/bin/ranlib libslic3r-arrange.a
