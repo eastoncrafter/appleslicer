@@ -202,7 +202,7 @@ def queue_to_octoprint(filename):
         print(queue_response)
         if queue_response.status_code == 200:
 
-            return "File successfully queued to OctoPrint."
+            return render_template('success.html', filename=filename)
         else:
                 return f"Failed to queue file: {queue_response.status_code} - {queue_response.text}", 500
 
